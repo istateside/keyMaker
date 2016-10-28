@@ -4,8 +4,11 @@ const form = document.querySelector('form');
 const rootInput = document.querySelector('input[name="root"]');
 const text = document.querySelector('#progression-text');
 
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+
+function formOnSubmit(e) {
+  if (e) {
+    e.preventDefault();
+  }
 
   if (!rootInput.value) {
     return;
@@ -13,7 +16,25 @@ form.addEventListener('submit', function(e) {
 
   const progression = new Progression(rootInput.value);
   text.innerText = progression.toString();
+}
+
+form.addEventListener('submit', formOnSubmit);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const startingValue = getUrlParameter('root');
+
+  if (startingValue) {
+    rootInput.value = startingValue;
+    formOnSubmit();
+  }
 });
+
+function getUrlParameter(name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  const results = regex.exec(location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
 
 const CONVERSIONS = {
   'A#': 'Bb',
